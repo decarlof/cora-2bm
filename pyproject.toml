@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cora-2bm"
+version = "0.1.0"
+description = "2-BM tomography beamline adapters for CORA (APS)"
+requires-python = ">=3.12"
+dependencies = [
+    # CORA domain packages — path refs for local dev; pin versions for deployment
+    "cora-control @ file:///../cora-decarlof/domains/control",
+    "cora-acquisition @ file:///../cora-decarlof/domains/acquisition",
+    "cora-analysis @ file:///../cora-decarlof/domains/analysis",
+    "cora-automation @ file:///../cora-decarlof/domains/automation",
+    "cora-shared @ file:///../cora-decarlof/packages/shared",
+    # CORA API app (for container base class)
+    "cora-api @ file:///../cora-decarlof/apps/api",
+    # EPICS
+    "caproto>=1.1",
+    # HDF5 / Data Exchange
+    "h5py>=3.10",
+    "dxchange>=0.1.8",
+    # TomoScan (installed in tomo-bits conda env)
+    "tomoscan",
+    # Settings
+    "pydantic-settings>=2.0",
+    # DMagic — used as a library (not duplicated)
+    "dmagic @ file:///../DMagic-decarlof",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff",
+    "mypy",
+]
+
+[project.scripts]
+cora-2bm-sync = "cora_2bm.scheduling.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cora_2bm"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
